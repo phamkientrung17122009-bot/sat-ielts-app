@@ -19,12 +19,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build web
+      - name: Create www folder
         run: |
           mkdir www
           cp index.html www/index.html
 
-      - name: Install Capacitor
+      - name: Init Capacitor
+        run: |
+          npx cap init "SAT App" "com.sat.app" --web-dir=www
+
+      - name: Add Android
         run: npx cap add android
 
       - name: Sync
