@@ -1,0 +1,11 @@
+{
+  "name": "sat-app",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "mkdir www && cp index.html www/index.html"
+  },
+  "dependencies": {
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/android": "^5.0.0"
+  }
+}
