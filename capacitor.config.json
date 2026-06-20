@@ -1,0 +1,6 @@
+{
+  "appId": "com.sat.app",
+  "appName": "SAT IELTS App",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
