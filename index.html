@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-Day SAT & IELTS Auto-Pilot Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f7ff',
+                            100: '#ebf0ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for spreadsheet look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- HEADER & OVERALL PROGRESS -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-30 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent">
+                        SAT & IELTS MOCK-PLANNER
+                    </h1>
+                    <p class="text-xs text-slate-400">Roadmap Thực Chiến 30 Ngày • 60% SAT / 40% IELTS</p>
+                </div>
+            </div>
+
+            <!-- Global Target Indicator -->
+            <div class="flex gap-4 items-center">
+                <div class="text-right hidden sm:block">
+                    <div class="text-xs text-slate-400">Mục tiêu chiến dịch</div>
+                    <div class="text-sm font-bold text-slate-200">SAT 1000➔1250+ | IELTS 6.0➔6.5+</div>
+                </div>
+                <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
+                <!-- Progress bar -->
+                <div class="flex items-center gap-3 bg-slate-950/60 px-4 py-2 rounded-xl border border-slate-800/80">
+                    <div>
+                        <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                            <span>TIẾN ĐỘ HOÀN THÀNH</span>
+                            <span id="global-percent" class="text-emerald-400">0%</span>
+                        </div>
+                        <div class="w-36 bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div id="global-progress-bar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN INTERACTIVE SPACE -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- SIDEBAR: Day Selector Navigation (Grid-based Sheets UI) -->
+        <section class="lg:col-span-4 flex flex-col gap-4">
+            <div class="bg-slate-900 border border-slate-800/80 rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                        Trang Tính 30 Ngày
+                    </h2>
+                    <span id="completed-count" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300">0/30 Ngày</span>
+                </div>
+                
+                <!-- Quick Phase Legend -->
+                <div class="grid grid-cols-3 gap-1 mb-4 text-[10px] text-center text-slate-400">
+                    <div class="bg-blue-950/40 border border-blue-900/50 py-1 rounded">W1: Foundation</div>
+                    <div class="bg-indigo-950/40 border border-indigo-900/50 py-1 rounded">W2-3: Acceleration</div>
+                    <div class="bg-emerald-950/40 border border-emerald-900/50 py-1 rounded">W4: Exam Mode</div>
+                </div>
+
+                <!-- Days Spreadsheet Grid -->
+                <div class="grid grid-cols-5 gap-2" id="days-grid">
+                    <!-- Day buttons injected here via JS -->
+                </div>
+            </div>
+
+            <!-- Quick Motivation Box -->
+            <div class="bg-slate-900/50 border border-slate-800/50 rounded-2xl p-4 flex gap-3 items-start">
+                <span class="text-2xl">🔥</span>
+                <div>
+                    <h4 class="text-xs font-bold text-slate-200">NGUYÊN TẮC SẮT</h4>
+                    <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                        Làm ít đề nhưng **chữa cực sâu** và ghi hết lỗi sai vào Error Log sẽ giúp bạn bứt phá điểm số nhanh gấp 5 lần người làm đề bừa bãi.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN PANEL: Timetable & Error Log Tabs -->
+        <section class="lg:col-span-8 flex flex-col gap-4">
+            
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-slate-800 bg-slate-900/80 p-1 rounded-xl gap-1">
+                <button id="tab-btn-timetable" onclick="switchTab('timetable')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 bg-slate-800 text-white shadow">
+                    📅 THỜI GIAN BIỂU CHI TIẾT
+                </button>
+                <button id="tab-btn-errorlog" onclick="switchTab('errorlog')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-slate-200">
+                    📝 BẢNG ERROR LOG THỰC CHIẾN
+                </button>
+            </div>
+
+            <!-- TAB CONTENT 1: Timetable -->
+            <div id="tab-timetable" class="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-xl transition-all">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 mb-4 gap-2">
+                    <div>
+                        <span id="detail-day-phase" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-900/80 text-blue-300">Phase 1: Build Foundation</span>
+                        <h2 id="detail-day-title" class="text-lg font-extrabold text-slate-100 mt-1">NGÀY 1: Khởi Động Nhẹ Nhàng</h2>
+                    </div>
+                    <button onclick="toggleDayCompleted()" id="complete-day-btn" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl transition flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Đánh dấu hoàn thành ngày
+                    </button>
+                </div>
+
+                <!-- Time Slots Timetable Cards -->
+                <div class="space-y-4" id="time-slots-container">
+                    <!-- Dynamic Time Slots injected here -->
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 2: Error Log Table -->
+            <div id="tab-errorlog" class="hidden bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 mb-4 gap-3">
+                    <div>
+                        <h2 class="text-md font-extrabold text-slate-100">Bảng Theo Dõi & Sửa Lỗi Sai (Error Log)</h2>
+                        <p class="text-xs text-slate-400">Ghi lại chi tiết bẫy, lý do sai để không bao giờ lặp lại lỗi cũ.</p>
+                    </div>
+                    <button onclick="openAddErrorModal()" class="text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-lg shadow-blue-500/10 transition flex items-center gap-1.5 self-start">
+                        ➕ Thêm Lỗi Mới
+                    </button>
+                </div>
+
+                <!-- Spreadsheet Table Layout -->
+                <div class="overflow-x-auto border border-slate-800 rounded-xl bg-slate-950">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/80 text-slate-300 border-b border-slate-800 text-xs font-bold">
+                                <th class="p-3 whitespace-nowrap">Ngày ghi</th>
+                                <th class="p-3 whitespace-nowrap">Đề / Môn</th>
+                                <th class="p-3 whitespace-nowrap">Phân Loại Lỗi</th>
+                                <th class="p-3">Mô Tả Lỗi & Bài Học Rút Ra</th>
+                                <th class="p-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="error-log-tbody" class="text-xs divide-y divide-slate-800/50">
+                            <!-- Rows dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 p-4 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>© 2026 Bản Kế Hoạch Luyện Thi SAT & IELTS Thực Chiến 30 Ngày.</p>
+            <div class="flex gap-4">
+                <a href="https://khanacademy.org" target="_blank" class="hover:text-blue-400 transition">Khan Academy</a>
+                <a href="https://collegeboard.org" target="_blank" class="hover:text-blue-400 transition">College Board Bluebook</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ADD ERROR LOG MODAL (CUSTOM MODAL TO AVOID ALERTS) -->
+    <div id="add-error-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="font-bold text-slate-100 text-sm">Ghi Nhận Lỗi Sai Mới</h3>
+                <button onclick="closeAddErrorModal()" class="text-slate-400 hover:text-slate-200">✕</button>
+            </div>
+            <form id="error-form" onsubmit="saveErrorLog(event)" class="p-5 space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1 font-semibold">Môn học / Kỳ thi</label>
+                    <select id="err-subject" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200 focus:outline-none focus:border-blue-500">
+                        <option value="SAT Math">SAT Math</option>
+                        <option value="SAT Reading & Writing">SAT Reading & Writing</option>
+                        <option value="IELTS Reading">IELTS Reading</option>
+                        <option value="IELTS Listening">IELTS Listening</option>
+                        <option value="IELTS Writing">IELTS Writing</option>
+                        <option value="IELTS Speaking">IELTS Speaking</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1 font-semibold">Phân loại lỗi sai</label>
+                    <select id="err-category" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200 focus:outline-none focus:border-blue-500">
+                        <option value="Sai ngu (Careless Error)">Sai ngu (Careless/Silly mistake)</option>
+                        <option value="Thiếu kiến thức (Concept Gap)">Thiếu kiến thức nền tảng (Concept Gap)</option>
+                        <option value="Bị lừa / Trúng bẫy (Trapped)">Bị lừa / Trúng bẫy (Trapped)</option>
+                        <option value="Thiếu thời gian (Time Pressure)">Áp lực thời gian (Time Pressure)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1 font-semibold">Nguồn đề / Câu số</label>
+                    <input type="text" id="err-source" placeholder="Ví dụ: Bluebook Test 1 - Q12 hoặc Cam 15 Test 1" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200 focus:outline-none focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1 font-semibold">Tại sao sai? Bài học xương máu rút ra</label>
+                    <textarea id="err-reason" rows="3" placeholder="Điền chi tiết nguyên nhân sai và cách làm đúng..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200 focus:outline-none focus:border-blue-500" required></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAddErrorModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-bold">Hủy</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg shadow-blue-500/10">Lưu lỗi sai</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CODE LOGIC FOR INTERACTIVITY & PERSISTENCE -->
+    <script>
+        // Full database of 30 days
+        const fullDatabase = [
+            // WEEK 1
+            {
+                day: 1, week: 1, phase: "Phase 1: Build Foundation",
+                title: "Ngày 1: Khởi Động Nhẹ Nhàng",
+                slots: [
+                    { time: "05:30 - 06:30", subject: "IELTS Listening", desc: "Cam 15 - Test 1 - Part 1 & 2. Ghi chép chính tả những câu nghe hụt.", resource: "Cambridge IELTS PDF + YouTube" },
+                    { time: "07:30 - 10:00", subject: "SAT Reading", desc: "Khan Academy - Active Reading Strategies. Làm 2 passages không giới hạn thời gian để phân tích phương án loại trừ.", resource: "Khan Academy SAT" },
+                    { time: "14:00 - 16:30", subject: "SAT Math", desc: "Khan Academy - Heart of Algebra (Linear equations). Hoàn thành cấp độ Basic + Medium.", resource: "Khan Academy Math" },
+                    { time: "20:00 - 21:30", subject: "IELTS Speaking", desc: "IELTS Speaking Forecast - Topic 'Work or Study'. Tự ghi âm nói Part 1.", resource: "Speaking Forecast" }
+                ]
+            },
+            {
+                day: 2, week: 1, phase: "Phase 1: Build Foundation",
+                title: "Ngày 2: Từ Vựng & Ngữ Pháp Bản Lề",
+                slots: [
+                    { time: "05:30 - 06:30", subject: "Vocab", desc: "Học 20 từ SAT hay gặp trên Quizlet + 10 collocations IELTS chủ đề 'Education'.", resource: "Quizlet" },
+                    { time: "07:30 - 10:00", subject: "SAT Writing", desc: "Khan Academy - Standard English Conventions (Subject-verb, Pronouns).", resource: "Khan Academy" },
+                    { time: "14:00 - 16:30", subject: "IELTS Writing", desc: "Học cấu trúc viết mở bài + kết bài Task 2 cho tất cả các dạng bài.", resource: "IELTS Simon / Liz" },
+                    { time: "20:00 - 21:30", subject: "IELTS Speaking", desc: "Luyện Shadowing 30 phút theo video ngắn trên BBC Learning English.", resource: "BBC Learning English" }
+                ]
+            },
+            {
+                day: 3, week: 1, phase: "Phase 1: Build Foundation",
+                title: "Ngày 3: Tư Duy Loại Trừ Đáp Án",
+                slots: [
+                    { time: "05:30 - 06:30", subject: "IELTS Listening", desc: "Cam 15 - Test 1 - Part 3 & 4. Học cách nhạy bén với bẫy Paraphrase.", resource: "Cambridge IELTS" },
+                    { time: "07:30 - 10:00", subject: "SAT Reading", desc: "Học cách loại bỏ các phương án nhiễu (Too broad, Half-right, Not mentioned).", resource: "Khan Academy" },
+                    { time: "14:00 - 16:30", subject: "SAT Math", desc: "Khan Academy - Passport to Advanced Math (Quadratics).", resource: "Khan Academy" },
+                    { time: "20:00 - 21:30", subject: "IELTS Speaking", desc: "Speaking Part 2 - Topic 'Describe a person you admire'. Lập dàn ý 1 phút, nói 2 phút.", resource: "Ghi âm cá nhân" }
+                ]
+            },
+            {
+                day: 4, week: 1, phase: "Phase 1: Build Foundation",
+                title: "Ngày 4: Đo Sức Đo Trình",
+                slots: [
+                    { time: "Cả ngày linh hoạt", subject: "SAT Mini Test", desc: "Thực hiện 1 bài kiểm tra Math + RW rút gọn trên Bluebook hoặc Khan Academy.", resource: "Bluebook" },
+                    { time: "Buổi tối", subject: "Review Error Log", desc: "Lọc lại toàn bộ câu sai. Ghi chép cực kỳ cẩn thận vào Error Log.", resource: "Bảng tính cá nhân" }
+                ]
+            },
+            {
+                day: 5, week: 1, phase: "Phase 1: Build Foundation",
+                title: "Ngày 5: Đào Sâu Kỹ Thuật",
+                slots: [
+                    { time: "05:30 - 06:30", subject: "IELTS Reading", desc: "Cam 15 - Test 1 - Passage 1. Tập trung tối đa kỹ thuật Skimming & Scanning.", resource: "Cambridge IELTS" },
+                    { time: "07:30 - 10:00", subject: "SAT Writing", desc: "Khan Academy - Transitions (Tuyệt chiêu xử lý câu nối: However, Therefore, ...).", resource: "Khan Academy" },
+                    { time: "14:00 - 16:30", subject: "IELTS Writing", desc: "Viết hoàn chỉnh 1 bài Task 1 (Line / Bar). Sử dụng từ vựng chỉ xu hướng rõ ràng.", resource: "IELTS Advantage" },
+                    { time: "20:00 - 21:30", subject: "IELTS Speaking", desc: "Speaking Part 3 - Topic liên quan đến Person. Luyện phản xạ nhanh.", resource: "IELTS Speaking" }
+                ]
+            },
+            {
+                day: 6, week: 1, phase: "Phase 1: Build Foundation",
+                title: "Ngày 6: Tổng duyệt tuần 1",
+                slots: [
+                    { time: "Sáng / Chiều", subject: "IELTS Full Test L&R", desc: "Làm đề Cam 15 - Test 1 (L & R) dưới áp lực thời gian chuẩn thi thật.", resource: "Cambridge IELTS" },
+                    { time: "Tối", subject: "Phân tích bẫy đề", desc: "Tìm bảng Keyword Table của đề thi để hiểu cách paraphrase của Cambridge.", resource: "Bảng tính cá nhân" }
+                ]
+           
