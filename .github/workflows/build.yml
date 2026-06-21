@@ -26,7 +26,7 @@ jobs:
 
       - name: Init Capacitor
         run: |
-          npx cap init "SAT App" "com.sat.app" --web-dir=www
+          npx @capacitor/cli init "SAT App" "com.sat.app" --web-dir=www
 
       - name: Add Android
         run: npx cap add android
