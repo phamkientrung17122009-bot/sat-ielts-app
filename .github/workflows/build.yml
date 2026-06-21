@@ -18,7 +18,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
+      - name: Build Web Application
+        run: npm run build
       - name: Create www folder
         run: |
           mkdir www
