@@ -29,10 +29,10 @@ jobs:
           npx @capacitor/cli init "SAT App" "com.sat.app" --web-dir=www
 
       - name: Add Android
-        run: npx cap add android
+        run: npx @capacitor/cli add android
 
       - name: Sync
-        run: npx cap sync
+        run: npx @capacitor/cli sync
 
       - name: Build APK
         run: |
